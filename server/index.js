@@ -12,12 +12,20 @@ const path = require('path');
 const port = process.env.PORT || 7000;
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // URL вашего фронтенда
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'static')));
 app.use(fileupload({}))
 app.use('/api', router);
-
+app.use((req, res, next) => {
+    console.log(`Received request: ${req.method} ${req.originalUrl}`)
+    next()
+})
 app.use(errorHandler)
 
 const start = async () => {
